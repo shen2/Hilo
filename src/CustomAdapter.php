@@ -3,7 +3,7 @@ namespace Hilo;
 
 abstract class CustomAdapter extends BaseAdapter{
     public function fetchMulti($keys){
-        $result = array();
+        $result = [];
         foreach($keys as $key)
             $result[$key] = $this->fetch($key);
         return $result;
@@ -30,7 +30,7 @@ abstract class CustomAdapter extends BaseAdapter{
     }
     
     public function preloadFromCache($key, $callback){
-        $this->_cache->defer('get', array($this->_cacheNamespace . ':' . $key), $callback);
+        $this->_cache->defer('get', [$this->_cacheNamespace . ':' . $key], $callback);
     }
     
     public function preloadMultiFromCache($keys, $callback){
@@ -38,7 +38,7 @@ abstract class CustomAdapter extends BaseAdapter{
         foreach($keys as $key)
             $cacheKeys[] = $this->_cacheNamespace . ':' . $key;
         
-        $this->_cache->defer('mget', array($cacheKeys), function($vals, $keys) use ($callback){
+        $this->_cache->defer('mget', [$cacheKeys], function($vals, $keys) use ($callback){
                 foreach($vals as $index => $data)
                     $callback($data, $keys[$index]);
             });

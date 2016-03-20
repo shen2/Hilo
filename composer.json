@@ -2,7 +2,7 @@
   "name" : "shen2/hilo",
   "description" : "Hierarchy Loader",
   "require" : {
-    "php" : "^5.5",
+    "php" : ">=5.5.0",
     "shen2/easy-redis" : "dev-master"
   },
   "license" : "MIT",
