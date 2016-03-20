@@ -1,0 +1,14 @@
+{
+  "name" : "shen2/hilo",
+  "description" : "Hierarchy Loader",
+  "require" : {
+    "php" : "^5.5",
+    "shen2/easy-redis" : "dev-master"
+  },
+  "license" : "MIT",
+  "minimum-stability" : "stable",
+  "authors" : [ {
+    "name" : "shen2",
+    "email" : "zhenyupku@gmail.com"
+  } ]
+}

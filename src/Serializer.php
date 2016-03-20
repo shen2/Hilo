@@ -1,5 +1,5 @@
 <?php
-namespace JezoPool;
+namespace Hilo;
 
 trait Serializer{
     /**
@@ -7,8 +7,8 @@ trait Serializer{
      * @param array $data
      * @return string
      */
-    protected function _serializeData(&$data){
-        return serialize($data);
+    protected function serialize(&$data){
+        return \serialize($data);
     }
 
     /**
@@ -16,10 +16,10 @@ trait Serializer{
      * @param string $data
      * @return array
      */
-    protected function _unserializeData($data){
+    public function unpackFromCache($data, $key){
         if (empty($data))
             return [];
 
-        return unserialize($data);
+        return \unserialize($data);
     }
 }

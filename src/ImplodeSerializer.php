@@ -1,5 +1,5 @@
 <?php
-namespace JezoPool;
+namespace Hilo;
 
 trait ImplodeSerializer{
 	/**
@@ -7,8 +7,8 @@ trait ImplodeSerializer{
 	 * @param array $data
 	 * @return string
 	 */
-	protected function _serializeData(&$data){
-		return implode(',', $data);
+	protected function serialize(&$data){
+		return \implode(',', $data);
 	}
 	
 	/**
@@ -16,10 +16,10 @@ trait ImplodeSerializer{
 	 * @param string $data
 	 * @return array
 	 */
-	protected function _unserializeData($data){
+	public function unpackFromCache($data, $key){
 		if (empty($data))
 			return [];
 		
-		return explode(',', $data);
+		return \explode(',', $data);
 	}
 }
