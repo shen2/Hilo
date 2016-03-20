@@ -24,7 +24,7 @@ class DataObjectAdapter extends BaseAdapter{
 	
 	/**
 	 * 从数据库中读取记录
-	 * @return \Generator
+	 * @return array
 	 */
 	public function fetchMulti($keys){
 		$cols = $this->_cacheFields
