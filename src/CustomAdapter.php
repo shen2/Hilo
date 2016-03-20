@@ -5,7 +5,7 @@ abstract class CustomAdapter extends BaseAdapter{
     public function fetchMulti($keys){
         $result = array();
         foreach($keys as $key)
-            $result[$key] = $this->_fetch($key);
+            $result[$key] = $this->fetch($key);
         return $result;
     }
     
@@ -49,6 +49,14 @@ abstract class CustomAdapter extends BaseAdapter{
     }
     
     public function unpackFromCache($data, $key){
-        return $this->unserialize($data);
+        return $data;
+    }
+    
+    /**
+     * Raw => Cache
+     * @var 
+     */
+    protected function serialize(&$data){
+        return $data;
     }
 }

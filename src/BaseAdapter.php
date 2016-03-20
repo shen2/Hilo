@@ -71,7 +71,7 @@ abstract class BaseAdapter{
      * DB => Mem
      * @var unknown
      */
-    abstract public function unpack();
+    abstract public function unpack(&$data, $key);
     
     /**
      * 从cache中读出的数据，重建成我们内存中的数据
@@ -79,10 +79,4 @@ abstract class BaseAdapter{
      * @var
      */
     abstract public function unpackFromCache($data, $key);
-    
-    /**
-     * Raw => Cache
-     * @var 
-     */
-    abstract protected function serialize();
 }

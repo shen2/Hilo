@@ -68,7 +68,7 @@ class DataObjectAdapter extends BaseAdapter{
 	 * @param array $args
 	 * @return mixed
 	 */
-	public function unpack($value, $key){
+	public function unpack(&$value, $key){
 	    if ($value === null)
 	        return null;
 	

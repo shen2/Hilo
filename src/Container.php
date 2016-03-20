@@ -1,7 +1,7 @@
 <?php
 namespace Hilo;
 
-abstract class Container{
+class Container{
 	/**
 	 * 
 	 * @var array
@@ -20,7 +20,8 @@ abstract class Container{
 	 */
 	protected $_adapter;
 	
-	public function __construct(){
+	public function __construct($adapter){
+	    $this->_adapter = $adapter;
 	}
 	
 	protected function _getKey($args){
@@ -82,7 +83,7 @@ abstract class Container{
 	 * @param $keys
 	 */
 	public function getMulti($keys){
-		$this->_adapter->preload($keys);
+		$this->preload($keys);
 		$this->_adapter->flushCache();
 	
 		if (!empty($this->_keysNotInPool)){ //	在php的数组缓存中没有找到，再去mysql中找
@@ -101,7 +102,7 @@ abstract class Container{
 	 * @param $keys
 	 */
 	public function getAssocMulti($keys){
-		$this->_adapter->preload($keys);
+		$this->preload($keys);
 		$this->_adapter->flushCache();
 	
 		if (!empty($this->_keysNotInPool)){ //	在php的数组缓存中没有找到，再去mysql中找
