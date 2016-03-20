@@ -16,10 +16,14 @@ class Container{
     
     /**
      * 
-     * @var BaseAdapter
+     * @var AdapterInterface
      */
     protected $_adapter;
     
+    /**
+     * 
+     * @param AdapterInterface $adapter
+     */
     public function __construct($adapter){
         $this->_adapter = $adapter;
     }

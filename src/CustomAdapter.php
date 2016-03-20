@@ -10,7 +10,7 @@ abstract class CustomAdapter extends BaseAdapter{
     }
     
     protected function cacheOne($key, $raw){
-        $this->_cache->defer('set', [$this->_cacheNamespace . ':'. $key, $raw]);
+        $this->_cache->defer('set', [$this->_cacheNamespace . ':'. $key, $this->serialize($raw)]);
     
         if ($this->_ttl)
             $this->_cache->defer('expire', [$this->_cacheNamespace . ':'. $key, $this->_ttl]);
