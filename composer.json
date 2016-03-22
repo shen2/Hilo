@@ -2,11 +2,14 @@
   "name" : "shen2/hilo",
   "description" : "Hierarchy Loader",
   "require" : {
-    "php" : ">=5.5.0",
+    "php" : ">=5.5.9",
     "shen2/easy-redis" : "dev-master"
   },
   "license" : "MIT",
   "minimum-stability" : "stable",
+  "autoload": {
+    "psr-4": { "Hilo\\": "src/" }
+  },
   "authors" : [ {
     "name" : "shen2",
     "email" : "zhenyupku@gmail.com"
