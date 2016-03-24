@@ -73,7 +73,7 @@ class Container{
         //    这里的keys不需要加array_unique()，array_flip()就可以去重
         $this->_keysNotInPool += $queryKeys;
         
-        if (!empty($this->_keysNotInPool)){
+        if (!empty($queryKeys)){
             $this->_adapter->preloadMultiFromCache(array_keys($queryKeys), [$this, 'onArrive']);
         }
     }
