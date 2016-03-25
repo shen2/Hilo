@@ -17,6 +17,9 @@ abstract class CustomAdapter extends BaseAdapter{
     }
     
     public function cacheMulti($rowset){
+        if (empty($rowset))
+            return;
+        
         $params = [];
         foreach($rowset as $key => $raw)
             $params[$this->_cacheNamespace . ':'. $key] = $this->serialize($raw);
