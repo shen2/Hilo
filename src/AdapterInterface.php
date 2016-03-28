@@ -27,11 +27,4 @@ interface AdapterInterface{
      * @var unknown
     */
     public function unpack(&$data, $key);
-    
-    /**
-     * 从cache中读出的数据，重建成我们内存中的数据
-     * Cache => Mem
-     * @var
-    */
-    public function unpackFromCache($data, $key);
 }

@@ -49,7 +49,7 @@ class Container{
         if (!array_key_exists($offset, $this->_pool)){
              
             if (!isset($this->_keysNotInPool[$offset])){
-                $this->_adapter->preloadFromCache($offset, [$this, 'onArrive']);
+                $this->_adapter->preloadFromCache($offset, $this);
                 $this->_keysNotInPool[$offset] = null;
             }
             
@@ -74,7 +74,7 @@ class Container{
         $this->_keysNotInPool += $queryKeys;
         
         if (!empty($queryKeys)){
-            $this->_adapter->preloadMultiFromCache(array_keys($queryKeys), [$this, 'onArrive']);
+            $this->_adapter->preloadMultiFromCache(array_keys($queryKeys), $this);
         }
     }
     
@@ -117,10 +117,8 @@ class Container{
      * @param $key
      */
     public function onArrive($data, $key){
-        if (!empty($data)){
-            $this->_pool[$key] = $this->_adapter->unpackFromCache($data, $key);
-            unset($this->_keysNotInPool[$key]);
-        }
+        $this->_pool[$key] = $data;
+        unset($this->_keysNotInPool[$key]);
     }
 
     /**

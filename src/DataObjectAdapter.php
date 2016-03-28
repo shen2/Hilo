@@ -51,13 +51,16 @@ class DataObjectAdapter extends BaseAdapter{
         }
     }
     
-    public function preloadFromCache($key, $callback){
-        $this->_cache->defer('hGetAll', [$this->_cacheNamespace . ':' . $key], $callback);
+    public function preloadFromCache($key, $container){
+        $this->_cache->defer('hGetAll', [$this->_cacheNamespace . ':' . $key], function($data) use ($key, $container){
+            if (!empty($data))
+                $container->onArrive($this->unpack($data, $key), $key);
+        });
     }
     
-    public function preloadMultiFromCache($keys, $callback){
+    public function preloadMultiFromCache($keys, $container){
         foreach($keys as $key){
-            $this->_cache->defer('hGetAll', [$this->_cacheNamespace . ':' . $key], $callback);
+            $this->preloadFromCache($key, $container);
         }
     }
     
@@ -97,10 +100,5 @@ class DataObjectAdapter extends BaseAdapter{
             if ($value === null)
                 $data[$key] = '';
         return $data;
-    }
-    
-    public function unpackFromCache($data, $key){
-        $key = substr($key, strlen($this->_cacheNamespace) + 1);
-        return $this->unpack($data, $key);
     }
 }

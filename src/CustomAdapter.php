@@ -32,18 +32,22 @@ abstract class CustomAdapter extends BaseAdapter{
         }
     }
     
-    public function preloadFromCache($key, $callback){
-        $this->_cache->defer('get', [$this->_cacheNamespace . ':' . $key], $callback);
+    public function preloadFromCache($key, $container){
+        $this->_cache->defer('get', [$this->_cacheNamespace . ':' . $key], function($data) use ($key, $container){
+            if (!empty($data))
+                $container->onArrive($this->unpackFromCache($data, $key), $key);
+        });
     }
     
-    public function preloadMultiFromCache($keys, $callback){
+    public function preloadMultiFromCache($keys, $container){
         $cacheKeys = [];
         foreach($keys as $key)
             $cacheKeys[] = $this->_cacheNamespace . ':' . $key;
         
-        $this->_cache->defer('mget', [$cacheKeys], function($vals, $keys) use ($callback){
+        $this->_cache->defer('mget', [$cacheKeys], function($vals) use ($keys, $container){
                 foreach($vals as $index => $data)
-                    $callback($data, $keys[$index]);
+                    if (!empty($data))
+                        $container->onArrive($this->unpackFromCache($data, $keys[$index]), $keys[$index]);
             });
     }
     
@@ -51,6 +55,11 @@ abstract class CustomAdapter extends BaseAdapter{
         return $data;
     }
     
+    /**
+     * 从cache中读出的数据，重建成我们内存中的数据
+     * Cache => Mem
+     * @var
+     */
     public function unpackFromCache($data, $key){
         return $data;
     }
