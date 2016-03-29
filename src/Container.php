@@ -9,10 +9,10 @@ class Container{
     protected $_pool = [];
     
     /**
-     * 已经送去cache查询，但是还没有去mysql查询的变量
+     * 已经送去cache查询，正在等待返回的key
      * @var array
      */
-    protected $_keysNotInPool = [];
+    protected $_waitingKeys = [];
     
     /**
      * 
@@ -29,17 +29,18 @@ class Container{
     }
     
     protected function _loadFromDb(){
-        $rowset = $this->_adapter->fetchMulti(array_keys($this->_keysNotInPool));
-        
-        //如果是null，也存进缓存
-        foreach(array_diff_key($this->_keysNotInPool, $this->_pool) as $key => $null){
+        // 如果是null，也存进缓存
+        // 这个操作必须在fetchMulti之前做，因为fetchMulti时有可能触发statement queue的flush，从而导致影响_waitingKeys
+        foreach(array_diff_key($this->_waitingKeys, $this->_pool) as $key => $null){
             $this->_pool[$key] = null;
         }
         
-        $this->_keysNotInPool = [];
+        $rowset = $this->_adapter->fetchMulti(array_keys($this->_waitingKeys));
         
         foreach ($rowset as $key => $raw){
             $this->_pool[$key] = $this->_adapter->unpack($raw, $key);
+            // fetchMulti()之后_waitingKeys有可能增加更多的key，因此不能直接把_waitingKeys置空，而需要一行一行unset
+            unset($this->_waitingKeys[$key]);
         }
         
         $this->_adapter->cacheMulti($rowset);
@@ -48,9 +49,9 @@ class Container{
     public function get($offset){
         if (!array_key_exists($offset, $this->_pool)){
              
-            if (!isset($this->_keysNotInPool[$offset])){
+            if (!isset($this->_waitingKeys[$offset])){
+                $this->_waitingKeys[$offset] = null;
                 $this->_adapter->preloadFromCache($offset, $this);
-                $this->_keysNotInPool[$offset] = null;
             }
             
             $this->_adapter->flushCache();
@@ -69,9 +70,9 @@ class Container{
      * @param array $keys
      */
     public function preload($keys){
-        $queryKeys = array_diff_key(array_flip($keys), $this->_pool, $this->_keysNotInPool);
+        $queryKeys = array_diff_key(array_flip($keys), $this->_pool, $this->_waitingKeys);
         //    这里的keys不需要加array_unique()，array_flip()就可以去重
-        $this->_keysNotInPool += $queryKeys;
+        $this->_waitingKeys += $queryKeys;
         
         if (!empty($queryKeys)){
             $this->_adapter->preloadMultiFromCache(array_keys($queryKeys), $this);
@@ -86,7 +87,7 @@ class Container{
         $this->preload($keys);
         $this->_adapter->flushCache();
     
-        if (!empty($this->_keysNotInPool)){ //    在php的数组缓存中没有找到，再去mysql中找
+        if (!empty($this->_waitingKeys)){ //    在php的数组缓存中没有找到，再去mysql中找
             $this->_loadFromDb();
         }
         
@@ -105,7 +106,7 @@ class Container{
         $this->preload($keys);
         $this->_adapter->flushCache();
     
-        if (!empty($this->_keysNotInPool)){ //    在php的数组缓存中没有找到，再去mysql中找
+        if (!empty($this->_waitingKeys)){ //    在php的数组缓存中没有找到，再去mysql中找
             $this->_loadFromDb();
         }
         return array_intersect_key($this->_pool, array_flip($keys));
@@ -118,7 +119,7 @@ class Container{
      */
     public function onArrive($data, $key){
         $this->_pool[$key] = $data;
-        unset($this->_keysNotInPool[$key]);
+        unset($this->_waitingKeys[$key]);
     }
 
     /**

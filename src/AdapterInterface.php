@@ -19,7 +19,9 @@ interface AdapterInterface{
     
     public function cacheMulti($rowset);
     
-    public function preloadFromCache($key, $callback);
+    public function preloadFromCache($key, $container);
+    
+    public function preloadMultiFromCache($key, $container);
     
     /**
      * 从数据库读出来之后，重建成我们需要的数据
